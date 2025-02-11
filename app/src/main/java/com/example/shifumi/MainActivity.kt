@@ -52,7 +52,7 @@ fun TitleScreen() {
             modifier = Modifier
                 .align(Alignment.Center)
         ) {
-            Text(text = "ah batar tu click")
+            Text(text = stringResource(R.string.jouer))
         }
     }
 }
