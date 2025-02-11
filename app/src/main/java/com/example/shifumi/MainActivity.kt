@@ -18,6 +18,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.example.shifumi.ui.theme.ShiFuMiTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,14 +29,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ShiFuMiTheme {
-                TitleScreen()
+                // TODO
             }
         }
     }
 }
 
 @Composable
-fun TitleScreen() {
+fun TitleScreen(navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -47,7 +50,7 @@ fun TitleScreen() {
 
         Button(
             onClick = {
-                // TODO
+                navController.navigate("game_screen")
             },
             modifier = Modifier
                 .align(Alignment.Center)
@@ -58,9 +61,18 @@ fun TitleScreen() {
 }
 
 @Composable
-@Preview
-fun TitleScreenPreview() {
-    ShiFuMiTheme {
-        TitleScreen()
+fun GameScreen(navController: NavController) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(
+            text = stringResource(R.string.shake),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 20.dp),
+            style = TextStyle(fontSize = 40.sp)
+        )
     }
 }
+
+// ha un truc ici normalement
