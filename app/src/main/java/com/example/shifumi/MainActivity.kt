@@ -1,6 +1,9 @@
 package com.example.shifumi
 
-import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,24 +26,57 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.shifumi.ui.theme.ShiFuMiTheme
+import java.text.DecimalFormat
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), SensorEventListener {
+
+    lateinit var sensorManager : SensorManager
+    private lateinit var gameViewModel: GameViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        gameViewModel = GameViewModel()
+        setUpSensor();
         setContent {
             ShiFuMiTheme {
-                App();
+                App(gameViewModel);
             }
         }
+    }
+
+    private fun setUpSensor() {
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.also{
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_FASTEST, SensorManager.SENSOR_DELAY_FASTEST)
+        }
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
+            val decimalFormat = DecimalFormat("0.00")
+            val x = decimalFormat.format(event.values[0])
+            val y = decimalFormat.format(event.values[1])
+            val z = decimalFormat.format(event.values[2])
+            gameViewModel.coords = "${x}, ${y}, ${z}"
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        return
+    }
+
+    override fun onDestroy() {
+        sensorManager.unregisterListener(this)
+        super.onDestroy()
     }
 }
 
 @Composable
-fun App(navController: NavHostController = rememberNavController()) {
+fun App(gameViewModel: GameViewModel, navController: NavHostController = rememberNavController()) {
     NavHost(navController = navController, startDestination = "title_screen") {
         composable("title_screen") { TitleScreen(navController) }
-        composable("game_screen") { GameScreen(navController) }
+        composable("game_screen") { GameScreen(navController, gameViewModel) } // ✅ Passer le ViewModel
     }
 }
 
@@ -56,7 +92,6 @@ fun TitleScreen(navController: NavController) {
                 .padding(top = 20.dp),
             style = TextStyle(fontSize = 50.sp)
         )
-
         Button(
             onClick = {
                 navController.navigate("game_screen")
@@ -70,7 +105,7 @@ fun TitleScreen(navController: NavController) {
 }
 
 @Composable
-fun GameScreen(navController: NavController) {
+fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -80,6 +115,12 @@ fun GameScreen(navController: NavController) {
                 .align(Alignment.TopCenter)
                 .padding(top = 20.dp),
             style = TextStyle(fontSize = 40.sp)
+        )
+        Text(
+            text = gameViewModel.coords,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding( bottom = 70.dp)
         )
         Button(
             onClick = {
@@ -92,5 +133,6 @@ fun GameScreen(navController: NavController) {
         }
     }
 }
+
 
 // ha un truc ici normalement
