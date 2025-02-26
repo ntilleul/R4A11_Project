@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -37,10 +38,10 @@ class MainActivity : ComponentActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         gameViewModel = GameViewModel()
-        setUpSensor();
+        setUpSensor()
         setContent {
             ShiFuMiTheme {
-                App(gameViewModel);
+                App(gameViewModel)
             }
         }
     }
@@ -54,11 +55,16 @@ class MainActivity : ComponentActivity(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
-            val decimalFormat = DecimalFormat("0.00")
-            val x = decimalFormat.format(event.values[0])
-            val y = decimalFormat.format(event.values[1])
-            val z = decimalFormat.format(event.values[2])
-            gameViewModel.coords = "${x}, ${y}, ${z}"
+            gameViewModel.velocity_x = event.values[0]
+            gameViewModel.velocity_y = event.values[1]
+            gameViewModel.velocity_z = event.values[2]
+
+            if (gameViewModel.get_velocity() >= gameViewModel.shake_threehold) {
+                gameViewModel.n_shake++
+                gameViewModel.is_shaken = true
+            } else {
+                gameViewModel.is_shaken = false
+            }
         }
     }
 
@@ -116,23 +122,37 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
                 .padding(top = 20.dp),
             style = TextStyle(fontSize = 40.sp)
         )
-        Text(
-            text = gameViewModel.coords,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding( bottom = 70.dp)
-        )
-        Button(
-            onClick = {
-                navController.navigate("title_screen")
-            },
+        Column (
             modifier = Modifier
                 .align(Alignment.Center)
         ) {
-            Text(text = stringResource(R.string.Menu_Home))
+            Text(
+                text = "Velocity: ${gameViewModel.get_velocity()}",
+                modifier = Modifier
+                    .padding(bottom = 70.dp)
+            )
+            Text(
+                text = "Velocity coords: ${gameViewModel.velocity_x}x, ${gameViewModel.velocity_y}y, ${gameViewModel.velocity_z}z",
+                modifier = Modifier
+                    .padding(bottom = 70.dp)
+            )
+            Text(
+                text = "you shaked ${gameViewModel.n_shake} times",
+                modifier = Modifier
+                    .padding(bottom = 70.dp)
+            )
+            Button(
+                onClick = {
+                    navController.navigate("title_screen")
+                },
+                modifier = Modifier
+            ) {
+                Text(text = stringResource(R.string.Menu_Home))
+            }
         }
     }
 }
 
 
 // ha un truc ici normalement
+// Quel truc ???
