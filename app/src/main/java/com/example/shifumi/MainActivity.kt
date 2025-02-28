@@ -15,6 +15,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,6 +37,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
 
     lateinit var sensorManager : SensorManager
     private lateinit var gameViewModel: GameViewModel
+    var shookLastTime : Long = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,15 +60,16 @@ class MainActivity : ComponentActivity(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
+            val decimalFormat = DecimalFormat("0.00")
             gameViewModel.velocity_x = event.values[0]
             gameViewModel.velocity_y = event.values[1]
             gameViewModel.velocity_z = event.values[2]
+            gameViewModel.printable = decimalFormat.format(gameViewModel.velocity_x) + "x, " + decimalFormat.format(gameViewModel.velocity_x) + "y, " + decimalFormat.format(gameViewModel.velocity_x) + "z"
 
-            if (gameViewModel.get_velocity() >= gameViewModel.shake_threehold) {
+            var currentTime = System.currentTimeMillis()
+            if ((gameViewModel.get_velocity() >= gameViewModel.shake_threshold) && (currentTime - shookLastTime > 300)) {
                 gameViewModel.n_shake++
-                gameViewModel.is_shaken = true
-            } else {
-                gameViewModel.is_shaken = false
+                shookLastTime = currentTime
             }
         }
     }
@@ -132,7 +138,7 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
                     .padding(bottom = 70.dp)
             )
             Text(
-                text = "Velocity coords: ${gameViewModel.velocity_x}x, ${gameViewModel.velocity_y}y, ${gameViewModel.velocity_z}z",
+                text = "Velocity coords: " + gameViewModel.printable,
                 modifier = Modifier
                     .padding(bottom = 70.dp)
             )
@@ -152,7 +158,3 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
         }
     }
 }
-
-
-// ha un truc ici normalement
-// Quel truc ???
