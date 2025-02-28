@@ -8,19 +8,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -68,6 +67,9 @@ class MainActivity : ComponentActivity(), SensorEventListener {
 
             var currentTime = System.currentTimeMillis()
             if ((gameViewModel.get_velocity() >= gameViewModel.shake_threshold) && (currentTime - shookLastTime > 300)) {
+                if(gameViewModel.n_shake == 3) {
+                    gameViewModel.n_shake = 0
+                }
                 gameViewModel.n_shake++
                 shookLastTime = currentTime
             }
@@ -143,10 +145,11 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
                     .padding(bottom = 70.dp)
             )
             Text(
-                text = "you shaked ${gameViewModel.n_shake} times",
+                text = "you shook ${gameViewModel.n_shake} times",
                 modifier = Modifier
                     .padding(bottom = 70.dp)
             )
+            ImageChangeOnShake(gameViewModel)
             Button(
                 onClick = {
                     navController.navigate("title_screen")
@@ -156,5 +159,15 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
                 Text(text = stringResource(R.string.Menu_Home))
             }
         }
+    }
+}
+
+@Composable
+fun ImageChangeOnShake(gameViewModel: GameViewModel, modifier: Modifier = Modifier) {
+    if (gameViewModel.n_shake == 3) {
+        Image(
+            painter = painterResource(id = R.drawable.kermit),
+            contentDescription = ""
+        )
     }
 }

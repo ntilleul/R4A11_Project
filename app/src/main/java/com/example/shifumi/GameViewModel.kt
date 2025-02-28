@@ -10,10 +10,9 @@ class GameViewModel : ViewModel() {
     var velocity_x = 0.0F
     var velocity_y = 0.0F
     var velocity_z = 0.0F
-    var printable by mutableStateOf("")
     var shake_threshold = 50.0F
-    var is_shaken = false
     var n_shake = 0
+    var printable by mutableStateOf("")
 
     fun get_velocity(): Float {
         return velocity_x + velocity_y + velocity_z
