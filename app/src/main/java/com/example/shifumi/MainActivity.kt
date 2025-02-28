@@ -12,13 +12,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.shifumi.ui.theme.ShiFuMiTheme
 import java.text.DecimalFormat
+import kotlin.random.Random
 
 class MainActivity : ComponentActivity(), SensorEventListener {
 
@@ -164,9 +165,18 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
 
 @Composable
 fun ImageChangeOnShake(gameViewModel: GameViewModel, modifier: Modifier = Modifier) {
+    var imageId = Random.nextInt(1, 3)
+    var path : Painter
+    if (imageId == 1) {
+        path = painterResource(id = R.drawable.ciseaux)
+    } else if (imageId == 2) {
+        path = painterResource(id = R.drawable.feuille)
+    } else {
+        path = painterResource(id = R.drawable.pierre)
+    }
     if (gameViewModel.n_shake == 3) {
         Image(
-            painter = painterResource(id = R.drawable.kermit),
+            painter = path,
             contentDescription = ""
         )
     }
