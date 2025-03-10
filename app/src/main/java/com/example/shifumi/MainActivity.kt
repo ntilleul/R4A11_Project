@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.shifumi.ui.theme.ShiFuMiTheme
 import java.text.DecimalFormat
+import kotlin.properties.Delegates
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity(), SensorEventListener {
@@ -73,6 +74,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                 }
                 gameViewModel.n_shake++
                 shookLastTime = currentTime
+                gameViewModel.imageId = Random.nextInt(1, 4)
             }
         }
     }
@@ -165,15 +167,12 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
 
 @Composable
 fun ImageChangeOnShake(gameViewModel: GameViewModel, modifier: Modifier = Modifier) {
-    var imageId = Random.nextInt(1, 3)
-    var path : Painter
-    if (imageId == 1) {
-        path = painterResource(id = R.drawable.ciseaux)
-    } else if (imageId == 2) {
-        path = painterResource(id = R.drawable.feuille)
-    } else {
-        path = painterResource(id = R.drawable.pierre)
+    val path = when (gameViewModel.imageId) {
+        1 -> painterResource(id = R.drawable.ciseaux)
+        2 -> painterResource(id = R.drawable.feuille)
+        else -> painterResource(id = R.drawable.pierre)
     }
+
     if (gameViewModel.n_shake == 3) {
         Image(
             painter = path,

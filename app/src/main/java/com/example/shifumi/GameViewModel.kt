@@ -3,6 +3,7 @@ package com.example.shifumi
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import java.text.DecimalFormat
 
@@ -13,6 +14,7 @@ class GameViewModel : ViewModel() {
     var shake_threshold = 50.0F
     var n_shake = 0
     var printable by mutableStateOf("")
+    var imageId by mutableIntStateOf(0)
 
     fun get_velocity(): Float {
         return velocity_x + velocity_y + velocity_z
