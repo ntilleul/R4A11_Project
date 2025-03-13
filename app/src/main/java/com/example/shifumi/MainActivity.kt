@@ -61,20 +61,19 @@ class MainActivity : ComponentActivity(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
-            val decimalFormat = DecimalFormat("0.00")
-            gameViewModel.velocity_x = event.values[0]
-            gameViewModel.velocity_y = event.values[1]
-            gameViewModel.velocity_z = event.values[2]
-            gameViewModel.printable = decimalFormat.format(gameViewModel.velocity_x) + "x, " + decimalFormat.format(gameViewModel.velocity_x) + "y, " + decimalFormat.format(gameViewModel.velocity_x) + "z"
+            gameViewModel.velocityX = event.values[0]
+            gameViewModel.velocityY = event.values[1]
+            gameViewModel.velocityZ = event.values[2]
 
             var currentTime = System.currentTimeMillis()
-            if ((gameViewModel.get_velocity() >= gameViewModel.shake_threshold) && (currentTime - shookLastTime > 300)) {
-                if(gameViewModel.n_shake == 3) {
-                    gameViewModel.n_shake = 0
+            if ((gameViewModel.getVelocity() >= gameViewModel.shakeThreshold) && (currentTime - shookLastTime > 300)) {
+                if(gameViewModel.nShake >= 3) {
+                    gameViewModel.nShake = 0
                 }
-                gameViewModel.n_shake++
+                gameViewModel.nShake++
+                gameViewModel.symbolPlayer = gameViewModel.randomSymbol()
+                gameViewModel.symbolBot = gameViewModel.randomSymbol()
                 shookLastTime = currentTime
-                gameViewModel.imageId = Random.nextInt(1, 4)
             }
         }
     }
@@ -94,6 +93,7 @@ fun App(gameViewModel: GameViewModel, navController: NavHostController = remembe
     NavHost(navController = navController, startDestination = "title_screen") {
         composable("title_screen") { TitleScreen(navController) }
         composable("game_screen") { GameScreen(navController, gameViewModel) } // ✅ Passer le ViewModel
+        composable("result_screen") { ResultScreen(navController, gameViewModel) }
     }
 }
 
@@ -126,57 +126,79 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            text = stringResource(R.string.shake),
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 20.dp),
-            style = TextStyle(fontSize = 40.sp)
-        )
         Column (
-            modifier = Modifier
-                .align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center)
         ) {
             Text(
-                text = "Velocity: ${gameViewModel.get_velocity()}",
-                modifier = Modifier
-                    .padding(bottom = 70.dp)
+                text = stringResource(R.string.shake),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                style = TextStyle(fontSize = 50.sp)
             )
             Text(
-                text = "Velocity coords: " + gameViewModel.printable,
-                modifier = Modifier
-                    .padding(bottom = 70.dp)
+                text = gameViewModel.countDownString,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                style = TextStyle(fontSize = 25.sp)
             )
-            Text(
-                text = "you shook ${gameViewModel.n_shake} times",
-                modifier = Modifier
-                    .padding(bottom = 70.dp)
-            )
-            ImageChangeOnShake(gameViewModel)
+
             Button(
                 onClick = {
+                    gameViewModel.reset()
                     navController.navigate("title_screen")
                 },
-                modifier = Modifier
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text(text = stringResource(R.string.Menu_Home))
+            }
+            if (gameViewModel.nShake >= 3) {
+                navController.navigate("result_screen")
             }
         }
     }
 }
 
 @Composable
-fun ImageChangeOnShake(gameViewModel: GameViewModel, modifier: Modifier = Modifier) {
-    val path = when (gameViewModel.imageId) {
-        1 -> painterResource(id = R.drawable.ciseaux)
-        2 -> painterResource(id = R.drawable.feuille)
+fun SymbolImage(modifier: Modifier = Modifier, symbol: Symbol) {
+    val path = when (symbol) {
+        Symbol.SCISSORS -> painterResource(id = R.drawable.ciseaux)
+        Symbol.PAPER -> painterResource(id = R.drawable.feuille)
         else -> painterResource(id = R.drawable.pierre)
     }
 
-    if (gameViewModel.n_shake == 3) {
-        Image(
-            painter = path,
-            contentDescription = ""
-        )
+    Image(
+        modifier = Modifier,
+        painter = path,
+        contentDescription = ""
+    )
+}
+
+
+@Composable
+fun ResultScreen(navController: NavController, gameViewModel: GameViewModel) {
+    Column (
+        modifier = Modifier
+    ) {
+        SymbolImage(Modifier, gameViewModel.symbolBot)
+        Text(text = "bot", modifier = Modifier.align(Alignment.CenterHorizontally))
+        Text(text = "VS", modifier = Modifier.align(Alignment.CenterHorizontally))
+        Text(text = "you", modifier = Modifier.align(Alignment.CenterHorizontally))
+        SymbolImage(Modifier, gameViewModel.symbolPlayer)
+        Button(
+            onClick = {
+                gameViewModel.reset()
+                navController.navigate("game_screen")
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = stringResource(R.string.rejouer))
+        }
+        Button(
+            onClick = {
+                gameViewModel.reset()
+                navController.navigate("title_screen")
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = stringResource(R.string.Menu_Home))
+        }
     }
 }
