@@ -25,7 +25,7 @@ class GameViewModel : ViewModel() {
     var velocityY = 0.0F
     var velocityZ = 0.0F
     var shakeThreshold = 50.0F
-    var nShake = 0
+    var nShake by mutableIntStateOf(0)
     var countDownString by mutableStateOf("3")
     var symbolPlayer by  mutableStateOf(Symbol.ROCK)
     var symbolBot by  mutableStateOf(Symbol.ROCK)

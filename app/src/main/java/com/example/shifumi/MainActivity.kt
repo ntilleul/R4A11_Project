@@ -9,19 +9,29 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -30,9 +40,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.shifumi.ui.theme.ShiFuMiTheme
-import java.text.DecimalFormat
-import kotlin.properties.Delegates
-import kotlin.random.Random
 
 class MainActivity : ComponentActivity(), SensorEventListener {
 
@@ -92,7 +99,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
 fun App(gameViewModel: GameViewModel, navController: NavHostController = rememberNavController()) {
     NavHost(navController = navController, startDestination = "title_screen") {
         composable("title_screen") { TitleScreen(navController) }
-        composable("game_screen") { GameScreen(navController, gameViewModel) } // ✅ Passer le ViewModel
+        composable("game_screen") { GameScreen(navController, gameViewModel) }
         composable("result_screen") { ResultScreen(navController, gameViewModel) }
     }
 }
@@ -139,7 +146,6 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 style = TextStyle(fontSize = 25.sp)
             )
-
             Button(
                 onClick = {
                     gameViewModel.reset()
@@ -165,7 +171,7 @@ fun SymbolImage(modifier: Modifier = Modifier, symbol: Symbol) {
     }
 
     Image(
-        modifier = Modifier,
+        modifier = Modifier.fillMaxSize(0.5f),
         painter = path,
         contentDescription = ""
     )
@@ -174,14 +180,17 @@ fun SymbolImage(modifier: Modifier = Modifier, symbol: Symbol) {
 
 @Composable
 fun ResultScreen(navController: NavController, gameViewModel: GameViewModel) {
-    Column (
-        modifier = Modifier
+    Column(
+        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        SymbolImage(Modifier, gameViewModel.symbolBot)
-        Text(text = "bot", modifier = Modifier.align(Alignment.CenterHorizontally))
-        Text(text = "VS", modifier = Modifier.align(Alignment.CenterHorizontally))
-        Text(text = "you", modifier = Modifier.align(Alignment.CenterHorizontally))
-        SymbolImage(Modifier, gameViewModel.symbolPlayer)
+        Spacer(modifier = Modifier.height(15.dp))
+        SymbolImage(modifier = Modifier, symbol = gameViewModel.symbolBot)
+        Text(text = "bot", modifier = Modifier.align(Alignment.CenterHorizontally), style = TextStyle(fontSize = 25.sp))
+        Text(text = "VS", modifier = Modifier.align(Alignment.CenterHorizontally), style = TextStyle(fontSize = 25.sp))
+        Text(text = "you", modifier = Modifier.align(Alignment.CenterHorizontally), style = TextStyle(fontSize = 25.sp))
+        SymbolImage(modifier = Modifier, symbol = gameViewModel.symbolPlayer)
+        Spacer(modifier = Modifier.height(15.dp))
         Button(
             onClick = {
                 gameViewModel.reset()
