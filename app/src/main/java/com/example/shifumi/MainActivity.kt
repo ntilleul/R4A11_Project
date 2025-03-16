@@ -78,6 +78,12 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                     gameViewModel.nShake = 0
                 }
                 gameViewModel.nShake++
+                gameViewModel.countDownString = when (gameViewModel.nShake) {
+                    0 -> "3"
+                    1 -> "2"
+                    2 -> "1"
+                    else -> "0"
+                }
                 gameViewModel.symbolPlayer = gameViewModel.randomSymbol()
                 gameViewModel.symbolBot = gameViewModel.randomSymbol()
                 shookLastTime = currentTime
