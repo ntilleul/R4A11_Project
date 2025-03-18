@@ -105,6 +105,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
 fun App(gameViewModel: GameViewModel, navController: NavHostController = rememberNavController()) {
     NavHost(navController = navController, startDestination = "title_screen") {
         composable("title_screen") { TitleScreen(navController) }
+        composable("difficulty_screen") { SelectDifficultyScreen(navController, gameViewModel) }
         composable("game_screen") { GameScreen(navController, gameViewModel) }
         composable("result_screen") { ResultScreen(navController, gameViewModel) }
     }
@@ -135,6 +136,52 @@ fun TitleScreen(navController: NavController) {
 }
 
 @Composable
+fun SelectDifficultyScreen(navController: NavController, gameViewModel: GameViewModel) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(
+            text = stringResource(R.string.select_difficulty),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 20.dp),
+            style = TextStyle(fontSize = 50.sp)
+        )
+        Column(
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            Button(
+                onClick = {
+                    gameViewModel.bot.setDiffculty(Difficulty.EASY)
+                    navController.navigate("game_screen")
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text(text = stringResource(R.string.easy))
+            }
+            Button(
+                onClick = {
+                    gameViewModel.bot.setDiffculty(Difficulty.HARD)
+                    navController.navigate("game_screen")
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text(text = stringResource(R.string.hard))
+            }
+            Button(
+                onClick = {
+                    gameViewModel.bot.setDiffculty(Difficulty.INVINCIBLE)
+                    navController.navigate("game_screen")
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text(text = stringResource(R.string.invincible))
+            }
+        }
+    }
+}
+
+@Composable
 fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -142,6 +189,11 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
         Column (
             modifier = Modifier.align(Alignment.Center)
         ) {
+            when (gameViewModel.bot.getDiffculty()) {
+                Difficulty.EASY -> Text("Difficulty: " + stringResource(R.string.easy))
+                Difficulty.HARD -> Text("Difficulty: " + stringResource(R.string.hard))
+                Difficulty.INVINCIBLE -> Text("Difficulty: " + stringResource(R.string.invincible))
+            }
             Text(
                 text = stringResource(R.string.shake),
                 modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -187,7 +239,9 @@ fun SymbolImage(modifier: Modifier = Modifier, symbol: Symbol) {
 @Composable
 fun ResultScreen(navController: NavController, gameViewModel: GameViewModel) {
     Column(
-        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(15.dp))
