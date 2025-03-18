@@ -86,8 +86,6 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                     2 -> "1"
                     else -> "0"
                 }
-                gameViewModel.symbolPlayer = gameViewModel.randomSymbol()
-                gameViewModel.symbolBot = gameViewModel.randomSymbol()
                 shookLastTime = currentTime
             }
         }
@@ -135,7 +133,7 @@ fun TitleScreen(navController: NavController) {
         )
         Button(
             onClick = {
-                navController.navigate("game_screen")
+                navController.navigate("difficulty_screen")
             },
             modifier = Modifier
                 .align(Alignment.Center)
@@ -199,11 +197,8 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
         Column (
             modifier = Modifier.align(Alignment.Center)
         ) {
-            when (gameViewModel.bot.getDiffculty()) {
-                Difficulty.EASY -> Text("Difficulty: " + stringResource(R.string.easy))
-                Difficulty.HARD -> Text("Difficulty: " + stringResource(R.string.hard))
-                Difficulty.INVINCIBLE -> Text("Difficulty: " + stringResource(R.string.invincible))
-            }
+            Text(text = gameViewModel.bot.getLastMove().toString())
+            Text(text = gameViewModel.bot.getFirstPlay().toString())
             Text(
                 text = stringResource(R.string.shake),
                 modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -224,6 +219,13 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel) {
                 Text(text = stringResource(R.string.Menu_Home))
             }
             if (gameViewModel.nShake >= 3) {
+                val lastPlayerSymbol = gameViewModel.symbolPlayer
+                val lastBotSymbol = gameViewModel.symbolBot
+                gameViewModel.symbolPlayer = gameViewModel.randomSymbol()
+                gameViewModel.symbolBot = gameViewModel.bot.play(
+                    gameViewModel.symbolPlayer,
+                    gameViewModel.getWinner(lastPlayerSymbol, lastBotSymbol)
+                )
                 navController.navigate("result_screen")
             }
         }
@@ -263,7 +265,8 @@ fun ResultScreen(navController: NavController, gameViewModel: GameViewModel) {
         Spacer(modifier = Modifier.height(15.dp))
         Button(
             onClick = {
-                gameViewModel.reset()
+                gameViewModel.nShake = 0
+                gameViewModel.countDownString = "3"
                 navController.navigate("game_screen")
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -279,5 +282,6 @@ fun ResultScreen(navController: NavController, gameViewModel: GameViewModel) {
         ) {
             Text(text = stringResource(R.string.Menu_Home))
         }
+        gameViewModel.bot.setLastMove(gameViewModel.symbolBot)
     }
 }

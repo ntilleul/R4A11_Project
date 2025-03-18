@@ -34,6 +34,7 @@ class GameViewModel : ViewModel() {
     fun reset() {
         this.nShake = 0
         this.countDownString = "3"
+        this.bot = Bot()
     }
 
     fun randomSymbol(): Symbol {
