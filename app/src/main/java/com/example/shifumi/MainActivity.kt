@@ -28,10 +28,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -103,11 +105,19 @@ class MainActivity : ComponentActivity(), SensorEventListener {
 
 @Composable
 fun App(gameViewModel: GameViewModel, navController: NavHostController = rememberNavController()) {
-    NavHost(navController = navController, startDestination = "title_screen") {
-        composable("title_screen") { TitleScreen(navController) }
-        composable("difficulty_screen") { SelectDifficultyScreen(navController, gameViewModel) }
-        composable("game_screen") { GameScreen(navController, gameViewModel) }
-        composable("result_screen") { ResultScreen(navController, gameViewModel) }
+    Box (modifier = Modifier.fillMaxSize()){
+        Image(
+            painter = painterResource(id = R.drawable.background),
+            contentDescription = "Background",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+        NavHost(navController = navController, startDestination = "title_screen") {
+            composable("title_screen") { TitleScreen(navController) }
+            composable("difficulty_screen") { SelectDifficultyScreen(navController, gameViewModel) }
+            composable("game_screen") { GameScreen(navController, gameViewModel) }
+            composable("result_screen") { ResultScreen(navController, gameViewModel) }
+        }
     }
 }
 
@@ -120,8 +130,8 @@ fun TitleScreen(navController: NavController) {
             text = stringResource(R.string.title_title_screen),
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 20.dp),
-            style = TextStyle(fontSize = 50.sp)
+                .padding(top = 70.dp),
+            style = TextStyle(fontSize = 50.sp, fontWeight = FontWeight.Bold)
         )
         Button(
             onClick = {
