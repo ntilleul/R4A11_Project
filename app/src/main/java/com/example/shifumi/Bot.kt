@@ -10,25 +10,13 @@ enum class Difficulty {
 
 class Bot {
 
-    private var difficulty: Difficulty = Difficulty.EASY
-    private var firstPlay: Boolean = true
-    private var lastMove: Symbol = Symbol.ROCK
-    private var lastWinState: WinState = WinState.TIE
+    var difficulty: Difficulty = Difficulty.EASY
+    var firstPlay: Boolean = true
+    var lastMove: Symbol = Symbol.ROCK
+    var lastWinState: WinState = WinState.TIE
 
     fun setDiffculty(difficulty: Difficulty) {
         this.difficulty = difficulty
-    }
-
-    fun getFirstPlay(): Boolean {
-        return firstPlay
-    }
-
-    fun getLastMove(): Symbol {
-        return lastMove
-    }
-
-    fun setLastMove(symbol: Symbol) {
-        lastMove = symbol
     }
 
     fun play(playerSymbol: Symbol, lastWinState: WinState): Symbol {

@@ -141,11 +141,7 @@ fun TitleScreen(navController: NavController) {
         )
         Button(
             onClick = {
-<<<<<<< HEAD
-                navController.navigate("difficulty_screen")
-=======
                 navController.navigate("move_choice_screen")
->>>>>>> 251b25c (Strat games finished)
             },
             modifier = Modifier
                 .align(Alignment.Center)
@@ -238,7 +234,7 @@ fun SelectDifficultyScreen(navController: NavController, gameViewModel: GameView
             Button(
                 onClick = {
                     bot.setDiffculty(Difficulty.EASY)
-                    gameViewModel.symbolBot = bot.play(gameViewModel.symbolPlayer)
+                    gameViewModel.symbolBot = bot.play(gameViewModel.symbolPlayer, bot.lastWinState)
                     navController.navigate("game_screen")
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -248,7 +244,7 @@ fun SelectDifficultyScreen(navController: NavController, gameViewModel: GameView
             Button(
                 onClick = {
                     bot.setDiffculty(Difficulty.HARD)
-                    gameViewModel.symbolBot = bot.play(gameViewModel.symbolPlayer)
+                    gameViewModel.symbolBot = bot.play(gameViewModel.symbolPlayer, bot.lastWinState)
                     navController.navigate("game_screen")
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -258,7 +254,7 @@ fun SelectDifficultyScreen(navController: NavController, gameViewModel: GameView
             Button(
                 onClick = {
                     bot.setDiffculty(Difficulty.INVINCIBLE)
-                    gameViewModel.symbolBot = bot.play(gameViewModel.symbolPlayer)
+                    gameViewModel.symbolBot = bot.play(gameViewModel.symbolPlayer, bot.lastWinState)
                     navController.navigate("game_screen")
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -277,16 +273,11 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel, bot: 
         Column (
             modifier = Modifier.align(Alignment.Center)
         ) {
-<<<<<<< HEAD
-            Text(text = gameViewModel.bot.getLastMove().toString())
-            Text(text = gameViewModel.bot.getFirstPlay().toString())
-=======
-            when (bot.getDifficulty()) {
+            when (bot.difficulty) {
                 Difficulty.EASY -> Text("Difficulty: " + stringResource(R.string.easy))
                 Difficulty.HARD -> Text("Difficulty: " + stringResource(R.string.hard))
                 Difficulty.INVINCIBLE -> Text("Difficulty: " + stringResource(R.string.invincible))
             }
->>>>>>> 251b25c (Strat games finished)
             Text(
                 text = stringResource(R.string.shake),
                 modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -299,7 +290,6 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel, bot: 
             )
             Button(
                 onClick = {
-                    gameViewModel.reset()
                     navController.navigate("title_screen")
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -310,7 +300,7 @@ fun GameScreen(navController: NavController, gameViewModel: GameViewModel, bot: 
                 val lastPlayerSymbol = gameViewModel.symbolPlayer
                 val lastBotSymbol = gameViewModel.symbolBot
                 gameViewModel.symbolPlayer = gameViewModel.randomSymbol()
-                gameViewModel.symbolBot = gameViewModel.bot.play(
+                gameViewModel.symbolBot = bot.play(
                     gameViewModel.symbolPlayer,
                     gameViewModel.getWinner(lastPlayerSymbol, lastBotSymbol)
                 )
@@ -363,13 +353,12 @@ fun ResultScreen(navController: NavController, gameViewModel: GameViewModel, bot
         }
         Button(
             onClick = {
-                gameViewModel.reset()
                 navController.navigate("title_screen")
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text(text = stringResource(R.string.Menu_Home))
         }
-        gameViewModel.bot.setLastMove(gameViewModel.symbolBot)
+        bot.lastMove = gameViewModel.symbolBot
     }
 }

@@ -30,12 +30,6 @@ class GameViewModel : ViewModel() {
     var symbolPlayer by mutableStateOf(Symbol.ROCK)
     var symbolBot by mutableStateOf(Symbol.ROCK)
 
-    fun reset() {
-        this.nShake = 0
-        this.countDownString = "3"
-        this.bot = Bot()
-    }
-
     fun randomSymbol(): Symbol {
         var result : Symbol
         result = when (Random.nextInt(1, 4)) {
