@@ -27,9 +27,8 @@ class GameViewModel : ViewModel() {
     var shakeThreshold = 50.0F
     var nShake by mutableIntStateOf(0)
     var countDownString by mutableStateOf("3")
-    var bot by mutableStateOf(Bot())
-    var symbolPlayer by  mutableStateOf(Symbol.ROCK)
-    var symbolBot by  mutableStateOf(Symbol.ROCK)
+    var symbolPlayer by mutableStateOf(Symbol.ROCK)
+    var symbolBot by mutableStateOf(Symbol.ROCK)
 
     fun reset() {
         this.nShake = 0
@@ -38,11 +37,13 @@ class GameViewModel : ViewModel() {
     }
 
     fun randomSymbol(): Symbol {
-        return when (Random.nextInt(1, 4)) {
+        var result : Symbol
+        result = when (Random.nextInt(1, 4)) {
             1 -> Symbol.ROCK
             2 -> Symbol.PAPER
             else -> Symbol.SCISSORS
         }
+        return result
     }
 
     fun getWinner(playerOneSymbol: Symbol, playerTwoSymbol: Symbol): WinState {

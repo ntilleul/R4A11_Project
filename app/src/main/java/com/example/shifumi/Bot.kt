@@ -13,6 +13,7 @@ class Bot {
     private var difficulty: Difficulty = Difficulty.EASY
     private var firstPlay: Boolean = true
     private var lastMove: Symbol = Symbol.ROCK
+    private var lastWinState: WinState = WinState.TIE
 
     fun setDiffculty(difficulty: Difficulty) {
         this.difficulty = difficulty

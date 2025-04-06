@@ -9,4 +9,6 @@
     <string name="easy">Easy</string>
     <string name="hard">Hard</string>
     <string name="invincible">Invincible</string>
+    <string name="choixdiff">choix de la difficulté</string>
+    <string name="select_move">Choix de votre prochain coup</string>
 </resources>
