@@ -29,6 +29,8 @@ class GameViewModel : ViewModel() {
     var countDownString by mutableStateOf("3")
     var symbolPlayer by mutableStateOf(Symbol.ROCK)
     var symbolBot by mutableStateOf(Symbol.ROCK)
+    var scoreJoueur by mutableStateOf(0)
+    var scoreOrdi by mutableStateOf(0)
 
     fun randomSymbol(): Symbol {
         var result : Symbol

@@ -11,4 +11,5 @@
     <string name="invincible">Invincible</string>
     <string name="choixdiff">choix de la difficulté</string>
     <string name="select_move">Choix de votre prochain coup</string>
+    <string name="scores">scores</string>
 </resources>

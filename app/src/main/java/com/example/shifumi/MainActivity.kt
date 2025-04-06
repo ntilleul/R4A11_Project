@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -123,6 +124,7 @@ fun App(gameViewModel: GameViewModel, bot: Bot, navController: NavHostController
             composable("difficulty_screen") { SelectDifficultyScreen(navController, model, bot) }
             composable("game_screen") { GameScreen(navController, model, bot) }
             composable("result_screen") { ResultScreen(navController, model, bot) }
+            composable("scores_screen") { ScoresScreen(navController, model) }
         }
     }
 }
@@ -147,6 +149,16 @@ fun TitleScreen(navController: NavController) {
                 .align(Alignment.Center)
         ) {
             Text(text = stringResource(R.string.select_move))
+        }
+        Button(
+            onClick = {
+                navController.navigate("scores_screen")
+            },
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(top = 100.dp)
+        ) {
+            Text(text = stringResource(R.string.scores))
         }
     }
 }
@@ -345,12 +357,49 @@ fun ResultScreen(navController: NavController, gameViewModel: GameViewModel, bot
             onClick = {
                 gameViewModel.nShake = 0
                 gameViewModel.countDownString = "3"
-                navController.navigate("game_screen")
+                navController.navigate("move_choice_screen")
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Text(text = stringResource(R.string.rejouer))
         }
+        Button(
+            onClick = {
+                when (gameViewModel.getWinner(gameViewModel.symbolPlayer, gameViewModel.symbolBot)) {
+                    WinState.PLAYER1 -> gameViewModel.scoreJoueur += 1
+                    WinState.PLAYER2 -> gameViewModel.scoreOrdi += 1
+                    else -> null
+                }
+                navController.navigate("title_screen")
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = stringResource(R.string.Menu_Home))
+        }
+        bot.lastMove = gameViewModel.symbolBot
+    }
+}
+
+@Composable
+fun ScoresScreen(navController: NavController, gameViewModel: GameViewModel) {
+    var scoreJoueur = gameViewModel.scoreJoueur
+    var scoreOrdi = gameViewModel.scoreOrdi
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Shifoumi", style = MaterialTheme.typography.headlineLarge)
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Affichage des scores
+        Row {
+            Text(text = "Vous: $scoreJoueur", modifier = Modifier.padding(end = 16.dp))
+            Text(text = "Ordinateur: $scoreOrdi")
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = {
                 navController.navigate("title_screen")
@@ -359,6 +408,5 @@ fun ResultScreen(navController: NavController, gameViewModel: GameViewModel, bot
         ) {
             Text(text = stringResource(R.string.Menu_Home))
         }
-        bot.lastMove = gameViewModel.symbolBot
     }
 }
